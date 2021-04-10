@@ -40,15 +40,16 @@ savemesh(Th, "Cyl.msh");
 //////////////////////////////////////////////////////////////////////////////////
 real eps=1.e-7;
 
-fespace Vh(Th,P2); //spazio di elementi finiti per velocità e velocità di perturbazione
-fespace Ph(Th,P1); //spazio di elementi finiti per pressione e pressione di perturbazione
+//finite element spaces
+fespace Vh(Th,P2); //
+fespace Ph(Th,P1); //
 fespace VPh(Th,[P2,P2,P1]);
-//u1 u2 p campo effettivo
-//du1,du2, dp campo di perturbazione
-// v1,v2, q funzion test
-VPh [u1,u2,p]; //soluzione
-VPh [v1,v2,q]; //test
-VPh [du1,du2,dp]; //perturbazione
+//u1 u2 p actual flow
+//du1,du2, dp Newtons's flow
+// v1,v2, q Test function
+VPh [u1,u2,p]; 
+VPh [v1,v2,q]; 
+VPh [du1,du2,dp]; 
 
 //macros
 
