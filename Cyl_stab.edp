@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////////////////
 //primary stability of a circular cylinder at Reynolds 100
-load "PETSc"
+//load "PETSc"
 load "SLEPc"
 //load "iovtk"
 include "./freefem_matlab_octave_plot-public/release-v2.0/demos/ffmatlib.idp"
@@ -145,3 +145,9 @@ int2d(Th)(Ugrad(up1,up2,ub1,ub2)'*[v1,v2] +Ugrad(up1,up2,ub1,ub2)'*[v1,v2])
 +int2d(Th)(ni*(dx(up1)*dx(v1)+dx(up2)*dx(v2)+dy(up1)*dy(v1)+dy(up2)*dy(v2)))
 +on(bcwall, up1=0, up2=0)+
 on(bcinlet, up1=0, up2=0);
+
+int nev=2;
+
+matrix A=a(VPh,VPh);
+
+int k = EPSSolve(A,B);
