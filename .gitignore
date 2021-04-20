@@ -3,3 +3,4 @@
 *.vtu
 *.pvd
 eig.txt
+laplace-2d-SLEPc-complex.edp
