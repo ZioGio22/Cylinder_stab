@@ -1,4 +1,5 @@
 *.msh
 *.vtk
 *.vtu
+*.pvd
 eig.txt
