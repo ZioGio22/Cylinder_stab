@@ -4,17 +4,21 @@
 // run with: mpirun -np 2 FreeFem++-mpi eig_eval.edp
 load "PETSc-complex"
 load "SLEPc-complex"
-real Re=100;
-real ni=1/Re;
 include "./freefem_matlab_octave_plot-public/release-v2.0/demos/ffmatlib.idp"
-
 include "macro_ddm.idp"
 
+//macros
 macro div(u1,u2) (dx(u1)+dy(u2)) //
 macro grad(u1,u2) [dx(u1),dy(u2)] //
 macro ugrad(u1,u2,v) (u1*dx(v) + u2*dy(v)) //
 macro Ugrad(u1,u2,v1,v2) [ugrad(u1,u2,v1),ugrad(u1,u2,v2)] //
-//read mesh an baseflow
+macro def(i) [i, i#B, i#C] //
+macro init(i) [i, i, i] //
+
+//read mesh an baseflow and Reynolds number
+real ni;
+ifstream RR("ni.txt");
+RR>>ni;
 mesh Th = readmesh("Cyl.msh");
 
 buildDmesh(Th);
@@ -27,31 +31,13 @@ VPh [v1,v2,q]; //test function
 ifstream file ("CylRe100.txt");
 file>> ub1[];
 
-plot(ub1, fill=1);
-
 func Pk =[P2,P2,P1];
-macro def(i) [i, i#B, i#C] //
-macro init(i) [i, i, i] //
 
 Mat<complex> J;
 
 createMat(Th,J,Pk)
 
-//matrixB
-varf b([up1,up2,pp],[v1,v2,q])=int2d(Th)(up1*v1+up2*v2);
-
-//Strouhal number at Re=100
-real St=0.16;
-
-//frequency of instability
-real f=2*pi*St;
-
-//shif invert point
-complex S=0.2+2*pi*0.17*1i;
-
 //matrix A
-
-
 varf a([up1,up2,pp],[v1,v2,q])=
 int2d(Th)(Ugrad(up1,up2,ub1,ub2)'*[v1,v2] +Ugrad(up1,up2,ub1,ub2)'*[v1,v2])
 -int2d(Th)(pp*(dx(v1)+dy(v2)))
@@ -60,6 +46,8 @@ int2d(Th)(Ugrad(up1,up2,ub1,ub2)'*[v1,v2] +Ugrad(up1,up2,ub1,ub2)'*[v1,v2])
 +on(2,4, up1=0, up2=0)+
 on(1, up1=0, up2=0);
 
+//matrixB
+varf b([up1,up2,pp],[v1,v2,q])=int2d(Th)(up1*v1+up2*v2);
 //number of eigenvalues
 int nEV=1;
 
@@ -76,6 +64,8 @@ J = Loc;
 matrix<complex> dB=b(VPh,VPh);
 Mat<complex> E(J,dB);
 
+//shif invert point
+complex S=0.2+2*pi*0.17*1i;
 string params = "-eps_tol 1.0e-6 -eps_nev " + nEV + " " +
     "-eps_type krylovschur -st_type sinvert -eps_monitor_all " +
     "-eps_target " + real(S) + "+" + imag(S) + "i";
@@ -86,7 +76,9 @@ k=min(k,nEV);
 cout<<k<<endl;
 int i=0;
 
+ffSaveVh(Th,VPh,"cyl_VPh.txt");
 ofstream eig ("eig.txt");
 for(i=0; i<k; i++){
   eig << eigv[i]<<endl;
+  ffSaveData(evec[i], "eigenvector_"+i+".txt");
 }
