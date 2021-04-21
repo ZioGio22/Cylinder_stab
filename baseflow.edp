@@ -6,8 +6,8 @@ macro def(i)[i, i#B, i#C]//
 real Re=100;
 real ni=1/Re;
 
-
-
+ofstream RR ("ni.txt");
+RR<<ni<<endl;
 ////// Mesh
 int ncil=150, ns=5, n1=20, n2=10;
 int n=8;
