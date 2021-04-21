@@ -2,6 +2,7 @@
 *.vtk
 *.vtu
 *.pvd
+*.txt
 eig.txt
 laplace-2d-SLEPc-complex.edp
 navier-stokes-2d-SLEPc-complex.edp
