@@ -1,12 +1,16 @@
 //////////////////////////////////////////////////////////////////////////////////
-//primary stability of a circular cylinder at Reynolds 100
+//primary stability of a circular cylinder
+exec("mkdir -p Data");
+exec("mkdir -p Flows");
 load "iovtk"
 include "./freefem_matlab_octave_plot-public/release-v2.0/demos/ffmatlib.idp"
 macro def(i)[i, i#B, i#C]//
-real Re=100;
+real Re=60;
 real ni=1/Re;
 
-ofstream RR ("ni.txt");
+ofstream RR ("Data/ni.txt");
+ofstream RE ("Data/Re.txt");
+RE<<Re<<endl;
 RR<<ni<<endl;
 ////// Mesh
 int ncil=150, ns=5, n1=20, n2=10;
@@ -35,9 +39,9 @@ border b3(t=0,1){ x=x2v;y=-y2*(1-2*t);label=0;}
 border b4(t=0,1){ x=x2v-(x2v-x2m)*t;y=+y2;label=0;}
 
 mesh Th=buildmesh(inlet(2*yinf/n*ns)+latinf((xinfv-xinfm)/n*ns)+outlet(2*yinf/n*ns)+latsup((xinfv-xinfm)/n*ns)+cil2(-100)+cilindro(-300)+a1(n1/n*2*y1)+a2(n1/n*(x1v-x1m))+a3(n1/n*2*y1)+a4(n1/n*(x1v-x1m))+b1(2*y2/n*n2)+b2((x2v-x2m)/n*n2)+b3(2*y2/n*n2)+b4((x2v-x2m)/n*n2));
-plot(Th,wait=1);
+//plot(Th,wait=1);
 
-savemesh(Th, "Cyl.msh");
+savemesh(Th, "Flows/Cyl.msh");
 //////////////////////////////////////////////////////////////////////////////////
 real eps=1.e-7;
 
@@ -119,5 +123,5 @@ string DataName = "u";
 savevtk("./CylRe"+Re+".vtu", Th, u1,u2,p, dataname=DataName, order=Order);
 
 
-ofstream file("CylRe"+Re+".txt");
+ofstream file("Flows/CylRe"+Re+".txt");
 file << u1[];
