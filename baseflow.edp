@@ -4,7 +4,7 @@ exec("mkdir -p Data");
 exec("mkdir -p Flows");
 load "iovtk"
 include "./freefem_matlab_octave_plot-public/release-v2.0/demos/ffmatlib.idp"
-real Re=100;
+real Re=60;
 real ni=1/Re;
 
 ofstream RR ("Data/ni.txt");
