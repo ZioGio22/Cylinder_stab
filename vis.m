@@ -57,11 +57,12 @@ hold on
 set(gca, 'XAxisLocation', 'origin')
 set(gca, 'YAxisLocation', 'origin')
 plot(la, 'o');
-plot(conj(la), 'or');
+plot(conj(la), 'o');
 xlabel('Re(\lambda)')
 ylabel('Im(\lambda)')
 grid on
-
+xlim([min(real(la))*0.9 max(real(la))*1.1])
+ylim([-max(imag(la))*1.1 max(imag(la))*1.1])
 %selecting the eigenvalue withe the greatest real part and the relative
 %modes
 
