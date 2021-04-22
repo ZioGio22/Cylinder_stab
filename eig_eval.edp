@@ -2,6 +2,8 @@
 /////Linear stability////////////////////////
 /////////////////////////////////////////////
 // run with: mpirun -np 2 FreeFem++-mpi eig_eval.edp
+exec("mkdir -p Eigenvectors");
+exec("mkdir -p Eigenvalues");
 load "PETSc-complex"
 load "SLEPc-complex"
 include "./freefem_matlab_octave_plot-public/release-v2.0/demos/ffmatlib.idp"
@@ -17,9 +19,12 @@ macro init(i) [i, i, i] //
 
 //read mesh an baseflow and Reynolds number
 real ni;
-ifstream RR("ni.txt");
+real Re;
+ifstream RE("Data/Re.txt");
+ifstream RR("Data/ni.txt");
+RE>>Re;
 RR>>ni;
-mesh Th = readmesh("Cyl.msh");
+mesh Th = readmesh("Flows/Cyl.msh");
 
 buildDmesh(Th);
 
@@ -28,9 +33,10 @@ fespace VPh(Th,[P2,P2,P1]);
 VPh<complex> [ub1, ub2,pb]; //baseflow
 VPh<complex> [up1,up2,pp]; //perturbated flow
 VPh [v1,v2,q]; //test function
-ifstream file ("CylRe100.txt");
+ifstream file ("Flows/CylRe"+Re+".txt");
 file>> ub1[];
 
+ffSaveData3(ub1, ub2, pb, "Flows/Vectored_baseflow.txt");
 func Pk =[P2,P2,P1];
 
 Mat<complex> J;
@@ -58,8 +64,8 @@ complex [int] eigv(nEV);
 VPh<complex>[int] def(evec)(nEV);
 
 matrix<complex> Loc=a(VPh,VPh);
-
-J = Loc;
+Loc =-Loc;
+J =  Loc;
 
 matrix<complex> dB=b(VPh,VPh);
 Mat<complex> E(J,dB);
@@ -76,9 +82,11 @@ k=min(k,nEV);
 cout<<k<<endl;
 int i=0;
 
-ffSaveVh(Th,VPh,"cyl_VPh.txt");
-ofstream eig ("eig.txt");
-for(i=0; i<k; i++){
-  eig << eigv[i]<<endl;
-  ffSaveData(evec[i], "eigenvector_"+i+".txt");
+ffSaveVh(Th,VPh,"Flows/cyl_VPh.txt");
+ofstream eig ("Eigenvalues/eig.txt");
+for(i=1; i<k+1; i++){
+  eig << real(eigv[i])<< " "<< imag(eigv[i])<<endl;
+  ffSaveData3(evec[i], evecB[i], evecC[i], "Eigenvectors/vectorized_eigenvectors_"+i+".txt");
+  //ffSaveData(evecB[i], "Eigenvectors/v_eigenvector_"+i+".txt");
+  //ffSaveData(evecC[i], "Eigenvectors/p_eigenvector_"+i+".txt");
 }
