@@ -49,13 +49,12 @@ int2d(Th)(Ugrad(up1,up2,ub1,ub2)'*[v1,v2] +Ugrad(up1,up2,ub1,ub2)'*[v1,v2])
 -int2d(Th)(pp*(dx(v1)+dy(v2)))
 +int2d(Th)(ni*(dx(up1)*dx(v1)+dx(up2)*dx(v2)+dy(up1)*dy(v1)+dy(up2)*dy(v2)))
 +int2d(Th)(q*(dx(up1)+dy(up2)))
-+on(2,4, up1=0, up2=0)+
-on(1, up1=0, up2=0);
++on(2,4,1, up1=0, up2=0);
 
 //matrixB
 varf b([up1,up2,pp],[v1,v2,q])=int2d(Th)(up1*v1+up2*v2);
 //number of eigenvalues
-int nEV=1;
+int nEV=2;
 
 //array to store eigenvalues
 complex [int] eigv(nEV);
